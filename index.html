@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bug Hunt Arena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070910;--pn:rgba(16,21,33,.72);--ln:rgba(125,160,255,.2);--cy:#22d3ee;--vi:#8b5cf6;--tx:#e8eef9;--mu:#92a0b8;--ok:#34d399;--bd:#fb7185;--am:#fbbf24;--hd:'Chakra Petch',system-ui,sans-serif;--mo:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;color-scheme:dark;box-sizing:border-box;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0)}
+body{margin:0;min-height:100%;background:var(--bg) radial-gradient(60rem 30rem at 80% -10%,rgba(139,92,246,.18),transparent),radial-gradient(40rem 25rem at 0 10%,rgba(34,211,238,.12),transparent);color:var(--tx);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:linear-gradient(var(--ln) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,var(--ln) 1px,transparent 1px) 0 0/48px 48px;opacity:.16;pointer-events:none;mask-image:linear-gradient(#000,transparent 80%)}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0);z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px clamp(16px,4vw,40px);background:rgba(7,9,16,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--ln)}
+.brand{font:700 18px var(--hd);letter-spacing:.14em;color:var(--tx);text-decoration:none;background:none;border:0;padding:6px 0}
+.brand b{color:var(--cy)}
+#hud{display:flex;gap:16px;font:500 12px var(--mo);color:var(--mu);flex-wrap:wrap;justify-content:flex-end}
+#hud b{color:var(--tx);font-weight:500}
+main{max-width:1280px;margin:0 auto;padding:clamp(20px,4vw,48px) clamp(16px,4vw,40px) 80px;position:relative}
+h1,h2,h3{font-family:var(--hd);margin:0;line-height:1}
+.tag{font:500 12px var(--mo);color:var(--cy);letter-spacing:.12em}
+.btn{border:1px solid var(--ln);background:rgba(255,255,255,.04);padding:12px 20px;min-height:44px;border-radius:6px;font:700 14px var(--hd);letter-spacing:.1em;transition:.15s}
+.btn:hover:not(:disabled){border-color:var(--cy);background:rgba(34,211,238,.1)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.p{background:linear-gradient(135deg,var(--cy),var(--vi));color:#05070c;border:0;box-shadow:0 0 28px rgba(34,211,238,.28)}
+.btn.p:hover:not(:disabled){filter:brightness(1.1);background:linear-gradient(135deg,var(--cy),var(--vi))}
+.btn.ld::after{content:"";display:inline-block;width:12px;height:12px;margin-left:10px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-1px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.panel{background:var(--pn);border:1px solid var(--ln);border-radius:10px;backdrop-filter:blur(8px)}
+/* landing */
+.land{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(24px,5vw,64px);align-items:center;min-height:calc(100vh - 160px)}
+h1{font-size:clamp(64px,13vw,150px);font-weight:700;letter-spacing:-.02em;margin:16px 0 24px}
+h1 span{display:block}h1 span:nth-child(2){color:transparent;-webkit-text-stroke:2px var(--cy)}
+.tl{font:500 clamp(20px,2.6vw,28px)/1.3 var(--hd);margin:0 0 12px}
+.sub{color:var(--mu);max-width:44ch;margin:0 0 28px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.cf{padding:24px;position:relative;animation:in .8s ease both}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.cf h3{font-size:22px;letter-spacing:.06em;margin-bottom:18px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.kv div,.pg div{padding:10px;border:1px solid var(--ln);border-radius:6px}
+small{display:block;font:500 11px var(--mo);color:var(--mu);letter-spacing:.08em}
+.kv b,.pg b{font:700 17px var(--hd)}
+.pg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;color:var(--mu);font-size:14px}
+.feat b{display:block;color:var(--tx);font:700 15px var(--hd);letter-spacing:.08em;margin-bottom:4px}
+/* config */
+h2{font-size:clamp(30px,5vw,48px);margin:8px 0 28px}
+.grp{margin-bottom:26px}.grp h3{font:500 12px var(--mo);color:var(--mu);letter-spacing:.12em;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.card{text-align:left;padding:14px 16px;min-height:64px;background:var(--pn);border:1px solid var(--ln);border-radius:8px;transition:.15s}
+.card:hover{border-color:var(--vi)}
+.card b{display:block;font:700 15px var(--hd);letter-spacing:.06em}
+.card span{font:400 12px var(--mo);color:var(--mu)}
+.card[aria-pressed=true]{border-color:var(--cy);background:rgba(34,211,238,.1);box-shadow:inset 0 0 0 1px var(--cy),0 0 22px rgba(34,211,238,.18)}
+.note{min-height:24px;color:var(--am);font-size:14px;margin:14px 0 0}
+/* arena */
+.ah{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;margin-bottom:16px}
+.ah h2{font-size:22px;margin:0;letter-spacing:.06em}
+.chip{font:500 12px var(--mo);padding:4px 10px;border:1px solid var(--ln);border-radius:99px;color:var(--mu)}
+.chip.x{color:var(--cy);border-color:var(--cy)}
+.grid{display:grid;gap:14px;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-areas:"ed inv" "con inv" "acts acts"}
+.ed{grid-area:ed}.con{grid-area:con}.inv{grid-area:inv}.acts{grid-area:acts}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid var(--ln);font:500 13px var(--mo)}
+.bar button{background:none;border:1px solid var(--ln);border-radius:4px;padding:4px 10px;font:500 12px var(--mo);min-height:32px}
+.code{display:flex;height:340px;font:400 14px/22px var(--mo);border-radius:0 0 10px 10px;overflow:hidden}
+#gut{margin:0;padding:12px 10px;text-align:right;color:#56627a;background:rgba(0,0,0,.25);user-select:none;overflow:hidden;min-width:44px}
+#code{flex:1;min-width:0;padding:12px;margin:0;border:0;resize:none;background:transparent;color:var(--tx);font:inherit;white-space:pre;overflow:auto;tab-size:4}
+#code:focus{outline:0;box-shadow:inset 0 0 0 1px var(--cy)}
+.inv{padding:20px;overflow:auto;max-height:640px}
+.inv h3{font:500 12px var(--mo);color:var(--cy);letter-spacing:.12em;margin:18px 0 6px}
+.inv h3:first-child{margin-top:0}.inv p{margin:0;color:#c3cde0;font-size:14px}
+.clue{margin-top:8px;padding:10px 12px;border:1px dashed var(--ln);border-radius:6px;font-size:14px;color:var(--mu)}
+.clue.on{border:1px solid var(--vi);color:var(--tx);background:rgba(139,92,246,.1)}
+.clue b{font:500 11px var(--mo);color:var(--vi);display:block}
+.con{font:400 13px/1.6 var(--mo)}
+.cb{padding:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px}
+.cb div{min-width:0}.cb pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}
+.cb .w{grid-column:1/-1}
+.st{padding:2px 8px;border-radius:4px;font-size:12px}
+.st.PASS{background:rgba(52,211,153,.18);color:var(--ok)}.st.ERROR,.st.MISMATCH{background:rgba(251,113,133,.18);color:var(--bd)}.st.IDLE{background:rgba(255,255,255,.08);color:var(--mu)}
+.acts{display:flex;gap:10px;flex-wrap:wrap;position:sticky;bottom:calc(8px + env(safe-area-inset-bottom,0));padding:10px;background:rgba(7,9,16,.9);border:1px solid var(--ln);border-radius:10px;backdrop-filter:blur(8px);z-index:3}
+.acts .p{flex:2;font-size:16px;padding:14px 24px}.acts .btn{flex:1;white-space:nowrap}
+/* result */
+.res{max-width:760px;margin:0 auto;padding:clamp(20px,4vw,40px)}
+.res h2{font-size:clamp(44px,9vw,84px);margin:8px 0 6px}
+.res.ok h2{color:var(--cy)}.res.no h2{color:var(--bd)}
+.xp{font:700 clamp(40px,8vw,64px) var(--hd);color:var(--ok);margin:10px 0}
+table{width:100%;border-collapse:collapse;font:400 14px var(--mo);margin:14px 0}
+td{padding:8px 0;border-bottom:1px solid var(--ln)}td:last-child{text-align:right}tr:last-child td{color:var(--cy);font-weight:500}
+.res h3{font:500 12px var(--mo);color:var(--cy);letter-spacing:.12em;margin:22px 0 8px}
+.res p{margin:0 0 8px;color:#c3cde0}
+.badge{display:inline-block;margin:0 8px 8px 0;padding:6px 14px;border:1px solid var(--am);color:var(--am);border-radius:99px;font:700 13px var(--hd);letter-spacing:.1em}
+dialog{background:#0c111c;color:var(--tx);border:1px solid var(--cy);border-radius:12px;padding:28px;max-width:min(560px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+dialog h2{margin:0 0 18px;font-size:28px}dialog li{margin-bottom:14px;color:var(--mu)}dialog li b{display:block;color:var(--tx);font:700 15px var(--hd);letter-spacing:.06em}dialog ol{padding-left:20px;margin:0 0 20px}
+#cv{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
+@media(max-width:860px){.land{grid-template-columns:1fr;min-height:0}.grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"ed" "con" "inv" "acts"}.code{height:300px}.feat{grid-template-columns:1fr}.cb{grid-template-columns:minmax(0,1fr)}.inv{max-height:none}.acts .btn{flex:1 1 30%}.acts .p{flex:1 1 100%;order:-1}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body>
+<header class="top"><button class="brand" id="home" aria-label="Bug Hunt Arena home">BUG<b>/</b>HUNT</button><div id="hud" aria-label="Player stats"></div></header>
+<main>
+<section id="v-land" class="land"><div>
+<p class="tag">// CLASSIFIED DEBUGGING PROGRAM</p>
+<h1><span>BUG</span><span>HUNT</span><span>ARENA</span></h1>
+<p class="tl">AI creates the bugs.<br>You hunt them down.</p>
+<p class="sub">Every bug leaves a clue. Find it. Fix it. Level up.</p>
+<div class="row"><button class="btn p" id="start">START HUNT →</button><button class="btn" id="how-b">HOW IT WORKS</button></div>
+<div class="feat"><div><b>FIND THE CLUE</b>Read the brief and trace the behavior.</div><div><b>UNDERSTAND THE BUG</b>Learn why the code misbehaves.</div><div><b>SQUASH THE BUG</b>Fix it, submit it, earn XP.</div></div></div>
+<aside class="panel cf" aria-label="Case file preview"><p class="tag" id="cf-n"></p><h3>CASE FILE</h3>
+<div class="kv"><div><small>STATUS</small><b style="color:var(--ok)">READY</b></div><div><small>THREAT LEVEL</small><b style="color:var(--am)">LOW</b></div><div><small>REWARD</small><b>+100 XP</b></div></div>
+<div class="pg" id="pg"></div></aside></section>
+
+<section id="v-cfg" hidden><p class="tag">// NEW ASSIGNMENT</p><h2 tabindex="-1">CHOOSE YOUR CASE</h2>
+<div class="grp"><h3>LANGUAGE</h3><div class="cards" id="g-lang"></div></div>
+<div class="grp"><h3>DIFFICULTY</h3><div class="cards" id="g-diff"></div></div>
+<div class="grp"><h3>BUG TYPE</h3><div class="cards" id="g-type"></div></div>
+<div class="row"><button class="btn p" id="gen">GENERATE CASE →</button><button class="btn" id="demo">QUICK DEMO</button><button class="btn" id="daily">DAILY CASE</button></div>
+<p class="note" id="note" role="status"></p></section>
+
+<section id="v-arena" hidden></section>
+<section id="v-res" hidden></section>
+</main>
+<dialog id="how"><h2>HOW IT WORKS</h2><ol>
+<li><b>01 — AI CREATES THE BUG</b>A challenge is generated based on language, difficulty and bug type.</li>
+<li><b>02 — YOU INVESTIGATE</b>Read the case brief, inspect the code and analyze the behavior.</li>
+<li><b>03 — YOU SQUASH THE BUG</b>Fix the code, run it and submit your solution.</li>
+<li><b>04 — LEVEL UP</b>Earn XP, maintain streaks and improve your debugging rank.</li></ol>
+<button class="btn p" id="how-x">GOT IT</button></dialog>
+<canvas id="cv" aria-hidden="true"></canvas>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LANGS={JavaScript:["main.js","node main.js"],Python:["main.py","python3 main.py"],Java:["Main.java","javac Main.java && java Main"],"C++":["main.cpp","g++ main.cpp -o main && ./main"]};
+const DIFFS={ROOKIE:["easy",60,"Warm-up cases"],HUNTER:["medium",100,"Real-world bugs"],ELITE:["hard",150,"Subtle and tricky"]};
+const TYPES=["Logic Error","Syntax Error","Runtime Error","Off-by-One","Wrong Condition"];
+const RANKS=[[0,"Novice Hunter"],[150,"Bug Scout"],[350,"Code Detective"],[650,"Bug Slayer"],[1000,"Senior Debugger"],[1500,"Syntax Sorcerer"],[2200,"Arena Master"]];
+const HINT=15,KEY="bha.v1";
+const CASES=[
+{t:"Array total goes NaN",l:"JavaScript",y:"Off-by-One",d:"easy",br:"sumArray adds up every number in a list.",ex:"10",ac:"NaN",wr:"The total is not a number even though the input is a plain list of numbers.",
+c:"function sumArray(nums) {\n  let total = 0;\n  for (let i = 0; i <= nums.length; i++) {\n    total += nums[i];\n  }\n  return total;\n}\nconsole.log(sumArray([1, 2, 3, 4]));\n",
+h:["Think about which positions an array of length 4 actually has.","Look at the loop's stopping test.","The loop runs one time too many and reads past the last item."],
+m:["i\\s*<\\s*nums\\.length"],n:["<=\\s*nums\\.length"],w:["The loop used <= against the array length.","Arrays are 0-indexed, so the extra pass reads undefined and NaN spreads into the sum.","Using < stops at the last valid index."]},
+{t:"Voting age rejects 18",l:"JavaScript",y:"Wrong Condition",d:"easy",br:"canVote(age) is true for anyone who is 18 or older.",ex:"true",ac:"false",wr:"An 18-year-old is turned away.",
+c:"function canVote(age) {\n  return age > 18;\n}\nconsole.log(canVote(18));\n",
+h:["Check what happens exactly at the boundary value.","Compare the operator with the rule 'or older'.","The comparison excludes the boundary itself."],
+m:["age\\s*>=\\s*18"],n:[],w:["The check used > instead of >=.","The rule includes 18, but > treats 18 as too young.","Switching to >= includes the boundary."]},
+{t:"Profile email crash",l:"JavaScript",y:"Runtime Error",d:"hard",br:"Print the user's email, or undefined if they have no profile.",ex:"undefined",ac:"TypeError: Cannot read properties of undefined (reading 'email')",wr:"The program crashes instead of printing a value.",
+c:"const user = { name: \"Ada\" };\nconsole.log(user.profile.email);\n",
+h:["Which value is undefined when the crash happens?","The failure happens one property before the one you want.","Guard the access, or use optional chaining."],
+m:["\\?\\.|&&|\\bif\\b"],n:[],w:["user.profile does not exist, so .email was read from undefined.","Reading a property of undefined throws a TypeError.","A guard or ?. short-circuits to undefined."]},
+{t:"Average is too high",l:"Python",y:"Logic Error",d:"medium",br:"average(nums) returns the mean of a list.",ex:"4.0",ac:"5.0",wr:"The answer is always off by the same amount.",
+c:"def average(nums):\n    total = 0\n    for n in nums:\n        total += n\n    return total / len(nums) + 1\n\nprint(average([2, 4, 6]))\n",
+h:["Check the result for a list where you know the mean.","The error is constant, so look at the final expression.","Something extra is added after the division."],
+m:["total\\s*/\\s*len\\(nums\\)"],n:["\\+\\s*1\\b"],w:["A stray + 1 was added to the mean.","It shifts every result by one.","Removing it returns the plain mean."]},
+{t:"Countdown prints nothing",l:"Python",y:"Off-by-One",d:"easy",br:"countdown(3) prints 3, 2, 1.",ex:"3\n2\n1",ac:"(no output)",wr:"The loop body never runs.",
+c:"def countdown(n):\n    for i in range(n, 0):\n        print(i)\n\ncountdown(3)\n",
+h:["What direction does range() count by default?","Look at the third argument of range().","A countdown needs a negative step."],
+m:["range\\(\\s*n\\s*,\\s*0\\s*,\\s*-1\\s*\\)"],n:[],w:["range(n, 0) has no step, so it counts up from 3 and is empty.","The default step is +1.","A step of -1 counts down to 1."]},
+{t:"Greeting will not start",l:"Python",y:"Syntax Error",d:"easy",br:"greet(name) prints a greeting.",ex:"Hello, Ada",ac:"SyntaxError: expected ':'",wr:"Python refuses to run the file.",
+c:"def greet(name)\n    print(\"Hello, \" + name)\n\ngreet(\"Ada\")\n",
+h:["The error is about structure, not logic.","Look at the end of the def line.","Python blocks begin with a colon."],
+m:["def\\s+greet\\(name\\)\\s*:"],n:[],w:["The def line is missing a colon.","Python needs it to open the function body.","Adding : fixes the parse."]},
+{t:"Best score crashes",l:"Java",y:"Runtime Error",d:"medium",br:"Find the highest score in an array.",ex:"90",ac:"Exception: ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3",wr:"It compiles but throws while running.",
+c:"public class Main {\n    public static void main(String[] args) {\n        int[] scores = {90, 80, 70};\n        int best = 0;\n        for (int i = 0; i <= scores.length; i++) {\n            if (scores[i] > best) best = scores[i];\n        }\n        System.out.println(best);\n    }\n}\n",
+h:["The message names an index that does not exist.","Compare the last index with the loop limit.","The loop reaches index 3 in a 3-item array."],
+m:["i\\s*<\\s*scores\\.length"],n:["<=\\s*scores\\.length"],w:["The loop ran to index scores.length.","The last valid index is length - 1.","Using < stays in bounds."]},
+{t:"Smallest is the largest",l:"C++",y:"Logic Error",d:"hard",br:"Print the smallest value in the array.",ex:"3",ac:"9",wr:"It prints the biggest number instead.",
+c:"#include <iostream>\nusing namespace std;\n\nint main() {\n    int a[] = {3, 9, 4};\n    int smallest = a[0];\n    for (int x : a) {\n        if (x > smallest) smallest = x;\n    }\n    cout << smallest << endl;\n    return 0;\n}\n",
+h:["The program finds an extreme, just not the right one.","Read the comparison inside the loop aloud.","The comparison keeps larger values."],
+m:["x\\s*<\\s*smallest"],n:["x\\s*>\\s*smallest"],w:["The comparison was reversed.","It keeps the largest value seen.","x < smallest tracks the minimum."]},
+{t:"Missing semicolon",l:"C++",y:"Syntax Error",d:"medium",br:"Print a greeting.",ex:"Hi",ac:"error: expected ';' before 'return'",wr:"The compiler stops before running.",
+c:"#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hi\" << endl\n    return 0;\n}\n",
+h:["The compiler points to the line after the real problem.","Check how the previous statement ends.","C++ statements end with a semicolon."],
+m:["endl\\s*;"],n:[],w:["The cout statement had no semicolon.","The parser only notices at the next line.","Adding ; ends the statement."]}];
+let P=load(),G={sel:{lang:"JavaScript",diff:"ROOKIE",type:"Logic Error"},c:null};
+function load(){try{const o=JSON.parse(localStorage.getItem(KEY));const n=k=>Number.isFinite(o&&o[k])&&o[k]>=0?Math.floor(o[k]):0;return{xp:n("xp"),solved:n("solved"),hunted:n("hunted"),streak:n("streak")}}catch(e){return{xp:0,solved:0,hunted:0,streak:0}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}}
+const lvl=xp=>{let i=0;RANKS.forEach((r,k)=>{if(xp>=r[0])i=k});return i};
+const pad=n=>String(n).padStart(3,"0");
+function hud(){const i=lvl(P.xp);$("#hud").innerHTML=`<span>LVL <b>${String(i+1).padStart(2,"0")}</b> ${esc(RANKS[i][1])}</span><span><b>${P.xp}</b> XP</span><span>STREAK <b>${P.streak}</b></span>`;
+$("#cf-n").textContent="CASE FILE #"+pad(P.hunted+1);
+$("#pg").innerHTML=[["LEVEL",String(i+1).padStart(2,"0")],["XP",P.xp],["CASES SOLVED",P.solved],["STREAK",P.streak]].map(a=>`<div><small>${a[0]}</small><b>${esc(a[1])}</b></div>`).join("")}
+function show(id){["land","cfg","arena","res"].forEach(v=>$("#v-"+v).hidden=v!==id);hud();scrollTo(0,0);const h=$("#v-"+id+" h2");if(h){h.tabIndex=-1;h.focus({preventScroll:true})}}
+function group(el,items,key,sub){$(el).innerHTML=items.map(it=>`<button class="card" data-k="${esc(it[0])}" aria-pressed="${G.sel[key]===it[0]}"><b>${esc(it[0])}</b>${it[1]?`<span>${esc(it[1])}</span>`:""}</button>`).join("");
+$(el).onclick=e=>{const b=e.target.closest(".card");if(!b)return;G.sel[key]=b.dataset.k;$(el).querySelectorAll(".card").forEach(x=>x.setAttribute("aria-pressed",x===b))}}
+function cfg(){show("cfg");group("#g-lang",Object.keys(LANGS).map(k=>[k,LANGS[k][0]]),"lang");group("#g-diff",Object.keys(DIFFS).map(k=>[k,DIFFS[k][2]+" · +"+DIFFS[k][1]+" XP"]),"diff");group("#g-type",TYPES.map(k=>[k,""]),"type");$("#note").textContent=""}
+function pick(){const s=G.sel,d=DIFFS[s.diff][0];let best=-1,pool=[];CASES.forEach(c=>{if(c===G.c&&CASES.length>1)return;const sc=(c.l===s.lang?4:0)+(c.y===s.type?2:0)+(c.d===d?1:0);if(sc>best){best=sc;pool=[c]}else if(sc===best)pool.push(c)});return{c:pool[Math.floor(Math.random()*pool.length)],exact:best===7}}
+function begin(c,replay){if(G.c&&!G.done&&G.num)P.streak=0;G.c=c;G.hints=0;G.att=0;G.done=false;G.replay=!!replay;G.code=c.c;G.run=null;if(!replay){P.hunted++;G.num=P.hunted}save();arena()}
+function arena(){const c=G.c,f=LANGS[c.l],xp=Object.values(DIFFS).find(x=>x[0]===c.d)[1];
+$("#v-arena").innerHTML=`<div class="ah"><h2 tabindex="-1">BUG HUNT ARENA</h2><span class="chip">CASE #${pad(G.num)}</span><span class="chip">${esc(c.l)}</span><span class="chip">${esc(c.d.toUpperCase())}</span><span class="chip">${esc(c.y)}</span><span class="chip x">+${xp} XP</span></div>
+<div class="grid"><section class="panel ed" aria-label="Code editor"><div class="bar"><span>${esc(f[0])}</span><button id="rs">RESET</button></div><div class="code"><pre id="gut" aria-hidden="true"></pre><textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor for ${esc(f[0])}. Press Escape then Tab to leave."></textarea></div></section>
+<section class="panel con" aria-label="Execution console"><div class="bar"><span>EXECUTION CONSOLE</span><span id="stt"></span></div><div class="cb" id="cb"></div></section>
+<aside class="panel inv" aria-label="Investigation"><h3>INVESTIGATION</h3><h3>CASE BRIEF</h3><p>${esc(c.br)}</p><h3>EXPECTED BEHAVIOR</h3><p>Prints <code>${esc(c.ex.split("\n").join(" / "))}</code></p><h3>ACTUAL BEHAVIOR</h3><p>${esc(c.ac)}</p><h3>WHAT'S WRONG?</h3><p>${esc(c.wr)}</p><h3>CLUES</h3><div id="cl"></div></aside>
+<div class="acts"><button class="btn p" id="sq">SQUASH BUG</button><button class="btn" id="rn">RUN CODE</button><button class="btn" id="gc"></button></div></div>`;
+const ta=$("#code");ta.value=G.code;gut();clues();con(G.run);show("arena");
+ta.oninput=()=>{G.code=ta.value;gut()};ta.onscroll=()=>{$("#gut").scrollTop=ta.scrollTop};
+ta.onkeydown=e=>{if(e.key==="Tab"&&!e.shiftKey&&!G.esc){e.preventDefault();document.execCommand("insertText",false,"    ")}G.esc=e.key==="Escape";if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();run()}};
+$("#rs").onclick=()=>{ta.value=G.code=c.c;gut();G.run=null;con(null)};$("#rn").onclick=run;$("#sq").onclick=squash;$("#gc").onclick=clue;
+const h=$("#v-arena h2");h.focus({preventScroll:true})}
+function gut(){const n=$("#code").value.split("\n").length;$("#gut").textContent=Array.from({length:n},(_,i)=>i+1).join("\n")}
+function clues(){const c=G.c;$("#cl").innerHTML=c.h.map((t,i)=>i<G.hints?`<div class="clue on"><b>CLUE 0${i+1}</b>${esc(t)}</div>`:`<div class="clue"><b>CLUE 0${i+1}</b>Locked</div>`).join("");const b=$("#gc");b.disabled=G.hints>=3;b.textContent=G.hints>=3?"ALL CLUES SHOWN":`GET CLUE −${HINT} XP`}
+function clue(){if(G.hints<3){G.hints++;clues()}}
+function judge(code,c){const st=[],pr={")":"(","]":"[","}":"{"};let bad=false;for(const ch of code.replace(/(["'`])(?:\\.|(?!\1).)*\1/g,'""')){if("([{".includes(ch))st.push(ch);else if(pr[ch]&&st.pop()!==pr[ch]){bad=true;break}}
+if(bad||st.length)return{ok:false,out:"SyntaxError: unbalanced brackets",syn:1};
+const ok=c.m.every(r=>new RegExp(r).test(code))&&!c.n.some(r=>new RegExp(r).test(code));return{ok,out:ok?c.ex:c.ac}}
+function run(){const c=G.c,b=$("#rn");b.classList.add("ld");b.disabled=true;try{const r=judge($("#code").value,c);G.run={r,s:r.ok?"PASS":/Error|Exception|error/.test(r.out)?"ERROR":"MISMATCH"}}catch(e){G.run={r:{out:"Execution failed. Check your code and try again."},s:"ERROR"}}
+setTimeout(()=>{b.classList.remove("ld");b.disabled=false;con(G.run)},350)}
+function con(run){const c=G.c,f=LANGS[c.l];const s=run?run.s:"IDLE";$("#stt").innerHTML=`<span class="st ${s}">${s}</span>`;
+$("#cb").innerHTML=`<div class="w"><small>COMMAND</small><pre>$ ${esc(f[1])}</pre></div><div class="w"><small>OUTPUT</small><pre>${run?esc(run.r.out):"Run your code to see output."}</pre></div><div><small>EXPECTED</small><pre>${esc(c.ex)}</pre></div><div><small>ACTUAL</small><pre>${run?esc(run.r.out):"—"}</pre></div><div class="w"><small>Simulated sandbox: your code is analysed against this case, never executed.</small></div>`}
+function squash(){const c=G.c,b=$("#sq");b.classList.add("ld");b.disabled=true;let r;try{r=judge($("#code").value,c)}catch(e){r={ok:false,out:"Something went wrong while evaluating your fix."}}
+setTimeout(()=>{b.classList.remove("ld");b.disabled=false;G.att++;r.ok?win():lose(r)},450)}
+function win(){const c=G.c,base=Object.values(DIFFS).find(x=>x[0]===c.d)[1],pen=HINT*G.hints,bonus=Math.min(5*P.streak,25);let tot=G.replay?0:Math.max(10,base-pen+bonus);const before=lvl(P.xp);
+if(!G.done&&!G.replay){P.xp+=tot;P.solved++;P.streak++;save()}G.done=true;const up=lvl(P.xp)>before;
+const bd=[];if(P.solved===1)bd.push("FIRST BLOOD");if(!G.hints)bd.push("CLEAN SWEEP");if(up)bd.push(RANKS[lvl(P.xp)][1].toUpperCase());if(!bd.length)bd.push("CASE SOLVED");
+$("#v-res").innerHTML=`<div class="panel res ok"><p class="tag">CASE #${pad(G.num)} SOLVED</p><h2 tabindex="-1">BUG SQUASHED</h2><div class="xp" id="xpn" aria-live="polite">+0 XP</div>
+${G.replay?"<p>Replay: practice only, no XP awarded.</p>":`<table><tr><td>BASE XP</td><td>+${base}</td></tr><tr><td>CLUE PENALTY</td><td>−${pen}</td></tr><tr><td>STREAK BONUS</td><td>+${bonus}</td></tr><tr><td>TOTAL XP</td><td>+${tot}</td></tr></table>`}
+<h3>WHAT YOU DISCOVERED</h3><p><b>The bug:</b> ${esc(c.w[0])}</p><p><b>Why it happened:</b> ${esc(c.w[1])}</p><p><b>Why the fix works:</b> ${esc(c.w[2])}</p>
+<h3>ACHIEVEMENTS</h3>${bd.map(x=>`<span class="badge">${esc(x)}</span>`).join("")}
+<div class="row" style="margin-top:20px"><button class="btn p" id="nx">NEXT CASE →</button><button class="btn" id="ta2">TRY AGAIN</button></div></div>`;
+show("res");$("#nx").onclick=nextCase;$("#ta2").onclick=()=>begin(c,true);
+const el=$("#xpn"),T=G.replay?0:tot;let k=0;const iv=setInterval(()=>{k=Math.min(T,k+Math.max(1,Math.ceil(T/20)));el.textContent="+"+k+" XP";if(k>=T)clearInterval(iv)},30);confetti()}
+function lose(r){const c=G.c;$("#v-res").innerHTML=`<div class="panel res no"><p class="tag">ATTEMPT ${G.att}</p><h2 tabindex="-1">BUG ESCAPED</h2><p>You're close. The code still doesn't behave as expected.</p>
+<table><tr><td>EXPECTED OUTPUT</td><td>${esc(c.ex.split("\n").join(" / "))}</td></tr><tr><td>ACTUAL OUTPUT</td><td>${esc(r.out)}</td></tr></table>
+<div class="row"><button class="btn p" id="ta">TRY AGAIN</button><button class="btn" id="gc2" ${G.hints>=3?"disabled":""}>GET CLUE −${HINT} XP</button></div></div>`;show("res");$("#ta").onclick=arena;$("#gc2").onclick=()=>{clue();arena()}}
+function nextCase(){const p=pick();begin(p.c)}
+function generate(){const b=$("#gen");b.classList.add("ld");b.disabled=true;$("#note").textContent="Assembling case file…";
+setTimeout(()=>{b.classList.remove("ld");b.disabled=false;try{const p=pick();$("#note").textContent=p.exact?"":"No exact match in the case library. Loading the closest case.";begin(p.c)}catch(e){$("#note").textContent="Unable to generate a case. Try the Demo Case."}},450)}
+function confetti(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;const cv=$("#cv"),x=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;const cols=["#22d3ee","#8b5cf6","#34d399","#fbbf24"];const ps=Array.from({length:110},()=>({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-12-2,s:4+Math.random()*5,c:cols[Math.floor(Math.random()*4)]}));let t=0;(function f(){x.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.3;x.fillStyle=p.c;x.fillRect(p.x,p.y,p.s,p.s)});if(++t<110)requestAnimationFrame(f);else x.clearRect(0,0,cv.width,cv.height)})()}
+$("#home").onclick=()=>show("land");$("#start").onclick=cfg;$("#how-b").onclick=()=>$("#how").showModal();$("#how-x").onclick=()=>$("#how").close();
+$("#gen").onclick=generate;$("#demo").onclick=()=>begin(CASES[0]);$("#daily").onclick=()=>begin(CASES[Math.floor(Date.now()/864e5)%CASES.length]);
+addEventListener("error",()=>{const n=$("#note");if(n)n.textContent="Something went wrong. Reload and try the Demo Case."});
+hud();
+</script></body></html>
